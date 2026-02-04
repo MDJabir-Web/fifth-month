@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="h-full">
-<head>
+ <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anniversary Experience</title>
@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
   <style>
     body {
       box-sizing: border-box;
@@ -168,21 +168,20 @@
       background: rgba(255, 192, 203, 0.15);
     }
   </style>
-</head>
-<body class="h-full w-full">
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full">
   <div id="root" class="h-full w-full"></div>
-  
-  <audio id="bgMusic" loop>
-    <source src="goldenbrown.mp3" type="audio/mpeg">
+  <audio id="bgMusic" loop><source src="goldenbrown.mp3" type="audio/mpeg">
   </audio>
-
   <script>
     const defaultConfig = {
       hero_title: "Princess💖",
       hero_subtitle: "Chapter Five",
       letter_title: "The 5th Month",
       letter_body: "it's been 5 months but it feels like way longer because of how much we actually talk. honestly i love that i can just share everything with you without thinking twice. those hours and hours we spend on sneak calls late at night even when we're supposed to be sleeping are my favorite parts of the day.\n\nthank you for being so loyal and just being a safe place for me. you're my princess for a reason and i'm lucky i get to do life with someone who actually gets it. happy 5 months.",
-      background_color: "#FFFDF5",
+      background_color: "#E8EEF5",
       accent_color: "#FFD1DC",
       text_color: "#2D2D2D",
       glass_background: "rgba(255, 255, 255, 0.3)",
@@ -205,7 +204,7 @@
       const accentColor = config.accent_color || defaultConfig.accent_color;
       const textColor = config.text_color || defaultConfig.text_color;
 
-      root.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, #FFF5F0 100%)`;
+      root.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, #D4E4F7 50%, #E8F0F8 100%)`;
 
       const heroTitleEl = document.getElementById('hero-title');
       const heroSubtitleEl = document.getElementById('hero-subtitle');
@@ -517,5 +516,5 @@
     // Add click listener to start music
     document.addEventListener('click', startMusicOnClick);
   </script>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c8cb5a5a7db7e60',t:'MTc3MDIzNDc1OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
