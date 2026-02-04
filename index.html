@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anniversary Experience</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+    }
+    
+    .playfair {
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .scroll-container {
+      scroll-snap-type: x mandatory;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .scroll-container::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .card-section {
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.9); }
+    }
+    
+    @keyframes float-alt {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(-25px, 25px) scale(0.95); }
+      66% { transform: translate(20px, -20px) scale(1.05); }
+    }
+    
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes bounce-arrow {
+      0%, 100% { transform: translateX(0); opacity: 1; }
+      50% { transform: translateX(10px); opacity: 0.7; }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(255, 192, 203, 0.6); }
+      50% { box-shadow: 0 0 30px rgba(255, 192, 203, 0.9); }
+    }
+    
+    @keyframes dot-appear {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    @keyframes float-up {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+      100% { transform: translateY(-100%) rotate(180deg); opacity: 0; }
+    }
+    
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+    
+    @keyframes quote-fade {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
+    }
+    
+    .timeline-dot:nth-child(1) { animation: dot-appear 0.5s ease-out 0.1s both; }
+    .timeline-dot:nth-child(2) { animation: dot-appear 0.5s ease-out 0.3s both; }
+    .timeline-dot:nth-child(3) { animation: dot-appear 0.5s ease-out 0.5s both; }
+    .timeline-dot:nth-child(4) { animation: dot-appear 0.5s ease-out 0.7s both; }
+    .timeline-dot:nth-child(5) { animation: dot-appear 0.5s ease-out 0.9s both; }
+    
+    .floating-heart {
+      position: absolute;
+      animation: float-up 8s ease-in infinite;
+      pointer-events: none;
+      font-size: 20px;
+    }
+    
+    .sparkle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+    
+    .quote-text {
+      animation: quote-fade 4s ease-in-out infinite;
+    }
+    
+    .blob-1 {
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    .blob-2 {
+      animation: float-alt 25s ease-in-out infinite;
+    }
+    
+    .breathe-img {
+      animation: breathe 4s ease-in-out infinite;
+    }
+    
+    .bounce-arrow {
+      animation: bounce-arrow 2s ease-in-out infinite;
+    }
+    
+    .glassmorphism {
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .timeline-dot {
+      transition: all 0.3s ease;
+    }
+    
+    .timeline-dot:hover {
+      animation: pulse-glow 1.5s ease-in-out infinite;
+      transform: scale(1.3);
+    }
+    
+    .tooltip {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    
+    .timeline-dot:hover .tooltip {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    
+    .music-toggle {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .music-toggle:hover {
+      transform: scale(1.1);
+    }
+    
+    .music-toggle.playing {
+      background: rgba(255, 192, 203, 0.15);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full w-full">
+  <div id="root" class="h-full w-full"></div>
+  <audio id="bgMusic" loop><source src="goldenbrown.mp3" type="audio/mpeg">
+  </audio>
+  <script>
+    const defaultConfig = {
+      hero_title: "Princess💖",
+      hero_subtitle: "Chapter Five",
+      letter_title: "The 5th Month",
+      letter_body: "it's been 5 months but it feels like way longer because of how much we actually talk. honestly i love that i can just share everything with you without thinking twice. those hours and hours we spend on sneak calls late at night even when we're supposed to be sleeping are my favorite parts of the day.\n\nthank you for being so loyal and just being a safe place for me. you're my princess for a reason and i'm lucky i get to do life with someone who actually gets it. happy 5 months.",
+      background_color: "#FFFDF5",
+      accent_color: "#FFD1DC",
+      text_color: "#2D2D2D",
+      glass_background: "rgba(255, 255, 255, 0.3)",
+      link_color: "#FF69B4"
+    };
+
+    let currentSlide = 0;
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const audio = document.getElementById('bgMusic');
+    let isPlaying = false;
+
+    async function onConfigChange(config) {
+      const root = document.getElementById('root');
+      const heroTitle = config.hero_title || defaultConfig.hero_title;
+      const heroSubtitle = config.hero_subtitle || defaultConfig.hero_subtitle;
+      const letterTitle = config.letter_title || defaultConfig.letter_title;
+      const letterBody = config.letter_body || defaultConfig.letter_body;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+
+      root.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, #FFF5F0 100%)`;
+
+      const heroTitleEl = document.getElementById('hero-title');
+      const heroSubtitleEl = document.getElementById('hero-subtitle');
+      const letterTitleEl = document.getElementById('letter-title');
+      const letterBodyEl = document.getElementById('letter-body');
+
+      if (heroTitleEl) heroTitleEl.textContent = heroTitle;
+      if (heroSubtitleEl) heroSubtitleEl.textContent = heroSubtitle;
+      if (letterTitleEl) letterTitleEl.textContent = letterTitle;
+      if (letterBodyEl) letterBodyEl.textContent = letterBody;
+
+      document.querySelectorAll('.text-color').forEach(el => {
+        el.style.color = textColor;
+      });
+    }
+
+    function renderApp() {
+      const root = document.getElementById('root');
+      
+      root.innerHTML = `
+        <div class="w-full h-full relative">
+          <!-- Background Blobs -->
+          <svg class="absolute w-full h-full pointer-events-none" style="z-index: 0;">
+            <defs>
+              <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="25" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+              </filter>
+            </defs>
+            <g filter="url(#goo)">
+              <ellipse class="blob-1" cx="20%" cy="30%" rx="250" ry="200" fill="${defaultConfig.accent_color}" opacity="0.3"/>
+              <ellipse class="blob-2" cx="80%" cy="70%" rx="300" ry="250" fill="${defaultConfig.accent_color}" opacity="0.25"/>
+            </g>
+          </svg>
+          
+          <!-- Floating Hearts -->
+          <div id="floatingHearts" class="absolute w-full h-full pointer-events-none" style="z-index: 0;"></div>
+          
+          <!-- Sparkles -->
+          <div id="sparkles" class="absolute w-full h-full pointer-events-none" style="z-index: 0;"></div>
+
+          <!-- Music Toggle -->
+          <div id="musicToggle" class="music-toggle fixed top-8 right-8 w-16 h-16 rounded-full border-2 flex items-center justify-center z-50" 
+               style="border-color: ${defaultConfig.accent_color}; background: rgba(255, 255, 255, 0.5);">
+            <svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="${defaultConfig.accent_color}">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="pauseIcon" width="24" height="24" viewBox="0 0 24 24" fill="${defaultConfig.accent_color}" style="display: none;">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+            </svg>
+          </div>
+
+          <!-- Scroll Container -->
+          <div id="scrollContainer" class="scroll-container w-full h-full flex" style="z-index: 1;">
+            
+            <!-- Card 1: Hero -->
+            <div class="card-section min-w-full h-full flex items-center justify-center px-8">
+              <div class="text-center relative">
+                <div class="quote-text absolute -top-16 left-1/2 transform -translate-x-1/2 text-sm font-light italic" style="color: ${defaultConfig.accent_color};">
+                  "Every love story is beautiful, but ours is my favorite"
+                </div>
+                <h1 id="hero-title" class="playfair text-color text-7xl md:text-9xl font-bold mb-6" style="color: ${defaultConfig.text_color};">
+                  ${defaultConfig.hero_title}
+                </h1>
+                <p id="hero-subtitle" class="text-color tracking-widest uppercase text-xl md:text-2xl font-light mb-16" style="color: ${defaultConfig.text_color}; letter-spacing: 0.3em;">
+                  ${defaultConfig.hero_subtitle}
+                </p>
+                <div class="bounce-arrow flex justify-center items-center gap-2" style="color: ${defaultConfig.accent_color};">
+                  <span class="text-sm font-light">Swipe Right</span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: The Visuals -->
+            <div class="card-section min-w-full h-full flex items-center justify-center px-8">
+              <div class="relative">
+                <div class="quote-text absolute -top-12 left-1/2 transform -translate-x-1/2 text-sm font-light italic text-center whitespace-nowrap" style="color: ${defaultConfig.accent_color};">
+                  "In your smile, I see something more beautiful than the stars"
+                </div>
+                <div class="glassmorphism p-8 md:p-12 rounded-3xl max-w-2xl">
+                  <img 
+                    src="https://i.ibb.co.com/fGr7yQgb/image-. 1.png" 
+                    alt="Anniversary Memory" 
+                    loading="lazy"
+                    class="breathe-img w-full rounded-3xl shadow-2xl"
+                    onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #FFD1DC 0%, #FFC0CB 100%)'; this.style.minHeight='400px'; this.alt='Image unavailable';"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: The Letter -->
+            <div class="card-section min-w-full h-full flex items-center justify-center px-8">
+              <div class="relative">
+                <div class="quote-text absolute -top-12 left-1/2 transform -translate-x-1/2 text-sm font-light italic text-center" style="color: ${defaultConfig.accent_color};">
+                  "You are my today and all of my tomorrows"
+                </div>
+                <div class="glassmorphism p-10 md:p-16 rounded-3xl max-w-3xl">
+                  <h2 id="letter-title" class="playfair text-color text-4xl md:text-5xl font-semibold mb-8" style="color: ${defaultConfig.text_color};">
+                    ${defaultConfig.letter_title}
+                  </h2>
+                  <p id="letter-body" class="text-color text-lg md:text-xl leading-relaxed whitespace-pre-line" style="color: ${defaultConfig.text_color}; line-height: 2;">
+                    ${defaultConfig.letter_body}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 4: The Timeline -->
+            <div class="card-section min-w-full h-full flex items-center justify-center px-8">
+              <div class="relative">
+                <div class="quote-text absolute -top-12 left-1/2 transform -translate-x-1/2 text-sm font-light italic text-center" style="color: ${defaultConfig.accent_color};">
+                  "Together is a wonderful place to be"
+                </div>
+                <div class="glassmorphism p-10 md:p-16 rounded-3xl max-w-4xl w-full">
+                  <h2 class="playfair text-color text-4xl md:text-5xl font-semibold mb-12 text-center" style="color: ${defaultConfig.text_color};">
+                    Our Journey
+                  </h2>
+                <div class="relative flex items-center justify-between">
+                  <div class="absolute w-full h-1 rounded-full" style="background: linear-gradient(90deg, rgba(255, 192, 203, 0.3) 0%, ${defaultConfig.accent_color} 50%, rgba(255, 192, 203, 0.3) 100%); top: 50%; transform: translateY(-50%); box-shadow: 0 2px 10px rgba(255, 192, 203, 0.4);"></div>
+                  ${[
+                    { month: 'Month 1', date: 'October 5th, 2024', memory: 'First month completed' },
+                    { month: 'Month 2', date: 'November 2nd, 2024', memory: 'First meet up' },
+                    { month: 'Month 3', date: 'December 23rd, 2024', memory: 'My best birthday' },
+                    { month: 'Month 4', date: 'January 5th, 2025', memory: 'New year together' },
+                    { month: 'Month 5', date: 'February 5th, 2025', memory: 'Today, still holding each other' }
+                  ].map((item, idx) => `
+                    <div class="timeline-dot relative z-10 w-7 h-7 rounded-full cursor-pointer border-4 border-white shadow-lg" 
+                         style="background: ${defaultConfig.accent_color};">
+                      <div class="tooltip absolute bottom-full left-1/2 transform -translate-x-1/2 mb-6 px-6 py-4 rounded-3xl whitespace-nowrap text-sm shadow-2xl"
+                           style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); color: ${defaultConfig.text_color}; border: 2px solid ${defaultConfig.accent_color};">
+                        <div class="playfair font-bold text-base" style="color: ${defaultConfig.accent_color};">${item.month}</div>
+                        <div class="font-light text-xs mt-1 opacity-60">${item.date}</div>
+                        <div class="font-medium text-sm mt-2">${item.memory}</div>
+                        <div class="absolute w-3 h-3 transform rotate-45 -bottom-1 left-1/2 -translate-x-1/2" 
+                             style="background: ${defaultConfig.accent_color};"></div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `;
+
+      // Generate floating hearts
+      const heartsContainer = document.getElementById('floatingHearts');
+      const heartEmojis = ['💕', '💖', '💗', '💓', '💝'];
+      
+      function createHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.textContent = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+        heart.style.animationDelay = Math.random() * 5 + 's';
+        heartsContainer.appendChild(heart);
+        
+        setTimeout(() => heart.remove(), 12000);
+      }
+      
+      // Create hearts periodically
+      setInterval(createHeart, 3000);
+      for (let i = 0; i < 5; i++) {
+        setTimeout(createHeart, i * 1000);
+      }
+      
+      // Generate sparkles
+      const sparklesContainer = document.getElementById('sparkles');
+      
+      function createSparkle() {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        sparklesContainer.appendChild(sparkle);
+        
+        setTimeout(() => sparkle.remove(), 2000);
+      }
+      
+      // Create sparkles periodically
+      setInterval(createSparkle, 500);
+      
+      // Music toggle functionality
+      const musicToggle = document.getElementById('musicToggle');
+      const playIcon = document.getElementById('playIcon');
+      const pauseIcon = document.getElementById('pauseIcon');
+
+      musicToggle.addEventListener('click', () => {
+        if (isPlaying) {
+          audio.pause();
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+          musicToggle.classList.remove('playing');
+        } else {
+          audio.play().catch(err => console.error('Audio playback failed:', err));
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+          musicToggle.classList.add('playing');
+        }
+        isPlaying = !isPlaying;
+      });
+
+      // Touch gesture support
+      const scrollContainer = document.getElementById('scrollContainer');
+      
+      scrollContainer.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+
+      scrollContainer.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        if (touchEndX < touchStartX - 50) {
+          // Swipe left
+          const cards = document.querySelectorAll('.card-section');
+          if (currentSlide < cards.length - 1) {
+            currentSlide++;
+            cards[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+        if (touchEndX > touchStartX + 50) {
+          // Swipe right
+          const cards = document.querySelectorAll('.card-section');
+          if (currentSlide > 0) {
+            currentSlide--;
+            cards[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    }
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['hero_title', config.hero_title || defaultConfig.hero_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+          ['letter_title', config.letter_title || defaultConfig.letter_title],
+          ['letter_body', config.letter_body || defaultConfig.letter_body]
+        ])
+      });
+    }
+
+    // Render the app
+    renderApp();
+    onConfigChange(window.elementSdk?.config || defaultConfig);
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c8ca69e31517e60',t:'MTc3MDIzNDE0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
